@@ -1,1 +1,1 @@
-# muscle_course
+# muscle-course
