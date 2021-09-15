@@ -181,14 +181,14 @@
             $(`#back-btn${i}${j}`).text('back');
 
         }
-
+        //
         function addComment(idx) {
             let comment = $(`#comment${idx}`).val()
             let imgSrc = $(`#img-tag${idx}`).attr('src');
 
             let form_data = new FormData();
-            form_data.append("imgSrc_give", imgSrc)
             form_data.append("nickname_give", "anonymous"); // 나중에 로그인 한 사람의 요소를 가지고 와야 함.
+            form_data.append("imgSrc_give", imgSrc)
             form_data.append("comment_give", comment);
 
             $.ajax({
