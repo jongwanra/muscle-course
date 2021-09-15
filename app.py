@@ -16,6 +16,7 @@ def home():
 @app.route('/diary', methods=['GET'])
 def show_diary():
     diaries = list(db.diary.find({}, {'_id':False}))
+    
     return jsonify({'all_diary': diaries})
 
 # 카드 저장

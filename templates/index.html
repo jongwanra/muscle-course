@@ -72,6 +72,63 @@
             listing();
         })
 
+        // 로딩시 호출(화면에 내용 뿌려줌)
+        function listing() {
+            $.ajax({
+                type: "GET",
+                url: "diary",
+                data: {},
+                success: function (response) {
+                    let diaries = response["all_diary"];
+                    for (let i = 0; i < diaries.length; i++) {
+                        let title = diaries[i]['title'];
+                        let content = diaries[i]['content'];
+                        let file = diaries[i]['file'];
+                        let comments = diaries[i]['comment'];
+
+                        // comment 내용 가져옴
+                        let commentBox = '';
+                        for (let j = 0; j < comments.length; j++) {
+                            let comment = comments[j]['comment'];
+                            // 로그인한 당사자인 경우 삭제, 편집 기능을 부여
+                            if (comments[j]['nickname'] == "anonymous") {
+                                commentBox += `<p class="card-text">
+                                    <span id="comment-tag${i}${j}">${comment}</span>
+                                    <button id="delete-btn${i}${j}" onclick="deleteComment(${i}, ${j})" type="button" class="btn btn-link">delete</button>
+                                    <button id="edit-btn${i}${j}"  onclick="editComment(${i}, ${j})" type="button" class="btn btn-link">edit</button>
+                                </p>
+                                `
+                            }
+                            else {
+                                commentBox += `<p class="card-text">${comment}</p>`
+                            }
+                        }
+
+
+                        let temp_html = `
+                        <div class="card mb-3 card-box">
+                            <div class="row g-0">
+                                <div class="col-md-4 box-profile">
+                                    <img src="${file}" id="img-tag${i}" class="img-fluid rounded-start" alt="...">
+                                </div>
+                                <div class="col-md-8 card-scroll">
+                                    <div class="card-body" id="card-body-box">
+                                        ${commentBox}
+                                        <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                                        <textarea class="form-control" id="comment${i}" rows="3" placeholder="내용 입력"></textarea>
+                                        <button onclick="addComment(${i})"type="button" class="btn btn-primary">add comment</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        `
+
+                        $('#container').append(temp_html);
+
+                    }
+                }
+            })
+        }
         function modifyComment(i, j) {
             let imgSrc = $(`#img-tag${i}`).attr('src');
             let content = $(`#edit-input-box${i}${j}`).val();
@@ -170,63 +227,7 @@
 
         }
 
-        // 로딩시 호출(화면에 내용 뿌려줌)
-        function listing() {
-            $.ajax({
-                type: "GET",
-                url: "diary",
-                data: {},
-                success: function (response) {
-                    let diaries = response["all_diary"];
-                    for (let i = 0; i < diaries.length; i++) {
-                        let title = diaries[i]['title'];
-                        let content = diaries[i]['content'];
-                        let file = diaries[i]['file'];
-                        let comments = diaries[i]['comment'];
 
-                        // comment 내용 가져옴
-                        let commentBox = '';
-                        for (let j = 0; j < comments.length; j++) {
-                            let comment = comments[j]['comment'];
-                            // 로그인한 당사자인 경우 삭제, 편집 기능을 부여
-                            if (comments[j]['nickname'] == "anonymous") {
-                                commentBox += `<p class="card-text">
-                                    <span id="comment-tag${i}${j}">${comment}</span>
-                                    <button id="delete-btn${i}${j}" onclick="deleteComment(${i}, ${j})" type="button" class="btn btn-link">delete</button>
-                                    <button id="edit-btn${i}${j}"  onclick="editComment(${i}, ${j})" type="button" class="btn btn-link">edit</button>
-                                </p>
-                                `
-                            }
-                            else {
-                                commentBox += `<p class="card-text">${comment}</p>`
-                            }
-                        }
-
-
-                        let temp_html = `
-                        <div class="card mb-3 card-box">
-                            <div class="row g-0">
-                                <div class="col-md-4 box-profile">
-                                    <img src="${file}" id="img-tag${i}" class="img-fluid rounded-start" alt="...">
-                                </div>
-                                <div class="col-md-8 card-scroll">
-                                    <div class="card-body" id="card-body-box">
-                                        ${commentBox}
-                                        <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
-                                        <textarea class="form-control" id="comment${i}" rows="3" placeholder="내용 입력"></textarea>
-                                        <button onclick="addComment(${i})"type="button" class="btn btn-primary">add comment</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        `
-
-                        $('#container').append(temp_html);
-
-                    }
-                }
-            })
-        }
         function posting() {
             let title = $('#title').val();
             let content = $("#content").val();
@@ -273,7 +274,6 @@
             </div>
         </div>
         <div id="container">
-
         </div>
     </div>
 </body>
