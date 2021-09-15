@@ -10,8 +10,10 @@
 
 }
 
+
+
 .header {
-    height: 135px;
+    height: 185px;
     text-align: center;
     border-bottom: 1px solid #999;
     box-sizing: border-box;
@@ -19,15 +21,16 @@
 }
 
 .header-logo h1 {
-    font: bold 40px 'arial';
-    padding-top: 10px;
+    font: bold 30px 'arial';
+    padding-top: 0px;
     letter-spacing: 1px;
     margin-top: 0px;
+    color: black;
 }
 
 .header-logo p {
     font: bold 12px 'arial';
-    letter-spacing: 1px;
+    letter-spacing: 2px;
 }
 
 .header-gnb ul {
@@ -36,49 +39,29 @@
 
 .header-gnb ul li {
     display: inline-block;
+    color: red;
 }
 
 .header-gnb ul li a {
     display: block;
-    font: bold 14px 'arial';
+    font: bold 16px 'arial';
     color: #999;
-    margin: 0px 30px;
+    margin: 2px 30px;
     letter-spacing: 1px;
 }
 
 .board2 {
     margin: auto;
     text-align: center;
-    margin-top: 20px;
+    margin-top: 25px;
     font-size: 25px;
     letter-spacing: 1px;
     color: #166cea;
 }
 
-.btn-area {
-    width: 100%;
-    height: 40px;
-    background: #166cea;
-    color: #fff;
-    font-size: 20px;
-    border: none;
-    border-radius: 25px;
-    cursor: pointer;
-    margin-top: 20px;
-    margin-bottom: 20px;
-}
-
-.btn-area2 {
-    width: 100%;
-    height: 40px;
-    background: #166cea;
-    color: #fff;
-    font-size: 20px;
-    border: none;
-    border-radius: 25px;
-    cursor: pointer;
-}
-
 .joins {
-    color: red;
+    margin-top: 25px;
 }
+
+
+

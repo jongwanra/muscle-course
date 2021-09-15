@@ -110,3 +110,4 @@ function update_profile() {
 }
 
 document.getElementById('btns-me').style.color = 'red';
+document.getElementById('join').style.color = 'red';

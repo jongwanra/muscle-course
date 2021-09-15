@@ -10,7 +10,6 @@
     <script src="{{ url_for('static', filename='script.js') }}"></script>
     <meta charset="UTF-8">
     <title>메인 페이지</title>
-
 </head>
 <body>
 <header class="header">
@@ -30,14 +29,16 @@
             <li><a href="#">팔(arm)</a></li>
             <li><a href="#">복근(abs)</a></li>
             <li><a href="#">하체(leg)</a></li>
-            <div class="joins">
-            <li><a href="#">로그인</a></li>
-            <li><a href="#">회원가입</a>
+
+            <div class="joins" id="join">
+            <li><a href="/login">로그인</a></li>
+            <li><a href="/member">회원가입</a></li>
                 </div>
         </ul>
     </div>
 </header>
-    <h2 class="board2">DEUKGYUN 게시판</h2>
+    <h2 class="board2">DEUKGYUN 게시판
+
     <section class="section">
         <article class="media">
             <figure class="media-left" style="align-self: center">
@@ -46,6 +47,7 @@
                          src="{{ url_for('static', filename=user_info.profile_pic_real) }}">
                 </a>
             </figure>
+
             <div class="media-content">
                 <div class="field">
                     <p class="control">
