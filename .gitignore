@@ -1,6 +1,7 @@
 *.log
 *.bak
 *.json
+*.jpg
 .vscode
 example.*
 

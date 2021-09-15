@@ -71,7 +71,6 @@ def modify_comment():
     idx_receive = request.form['idx_give']
     content_receive = request.form['content_give']
     
-
     target = db.diary.find_one({'file': imgSrc_receive})['comment']
     target[int(idx_receive)]["comment"] = content_receive
 
@@ -85,7 +84,6 @@ def delete_comment():
     # 삭제할 댓글의 고유값 받기
     imgSrc_receive = request.form['imgSrc_give']
     idx_receive = request.form['idx_give']
-
 
     updated_comment = db.diary.find_one({'file': imgSrc_receive},{'_id':False})["comment"]
     del updated_comment[int(idx_receive)]
