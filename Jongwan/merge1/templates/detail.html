@@ -32,25 +32,70 @@
             font-family: 'Jua', sans-serif;
         }
 
-        .card-box {
-            height: 300px;
-            max-width: 1000px;
-            margin-top: 50px;
+        .wrap {
+            width: 1140px;
+            margin: 0 auto;
         }
 
-        .box-profile {
-            width: 250px;
+        .cards-box {
+            width: 100%;
             height: 300px;
+            margin: 0 auto 20px auto;
+            border-radius: 5px;
+            border: 1px solid rgb(85, 83, 83);
+
         }
 
-        .img-fluid {
-            display: block;
+
+
+        .image-box {
+            background-color: gray;
+            width: 33.333%;
             height: 300px;
-            border-right: 1px solid rgba(0, 0, 0, .125);
+            float: left;
+
+            background-image: url('https://i.ytimg.com/vi/cLzuFGoS5xc/sddefault.jpg');
+            background-position: center;
+            background-size: cover;
         }
 
-        .edit_btn {
-            background-color: red;
+        .middle-all {
+            width: 33.333%;
+            height: 300px;
+            margin: auto;
+            float: left;
+            border-left: 1px solid rgb(85, 83, 83);
+            border-right: 1px solid rgb(85, 83, 83);
+        }
+
+        .middle-box {
+            width: 350px;
+            height: 252px;
+            float: left;
+        }
+
+        .btn-box {
+            width: 350px;
+            height: 48px;
+            margin-left: 20px;
+        }
+
+
+        .comment-box {
+            width: 33.333%;
+            height: 300px;
+            float: left;
+
+        }
+
+        .inner-comment-box {
+            width: 100%;
+            height: 73%;
+        }
+
+        .inner-input-box {
+            width: 100%;
+            height: 28%;
         }
 
         .comment-scroll {
@@ -62,14 +107,18 @@
             height: 300px;
             overflow-y: auto;
         }
+
+        .empty-box {
+            width: 100%;
+            height: 20px;
+        }
+
+        #container {
+            margin-top: 30px;
+        }
     </style>
     <script>
-
         function getImageUrl(slicing_url) {
-            if (slicing_url.length != 11) {
-                // 썸네일 이미지가 없는 경우 default 값을 넣어 줌
-                return "https://t1.daumcdn.net/cfile/tistory/99B44B425C56370828"
-            }
             return `https://i.ytimg.com/vi/${slicing_url}/sddefault.jpg`;
         }
 
@@ -82,10 +131,10 @@
         // 로딩시 호출(화면에 내용 뿌려줌)
         function listing() {
             let section_data = { "section_give": "{{section}}" };
-            console.log(section_data);
+
             $.ajax({
                 type: "GET",
-                url: "/detail", // url path problem.
+                url: "/detail",
                 dataType: "json",
                 data: section_data,
                 success: function (response) {
@@ -93,12 +142,11 @@
                     for (let i = 0; i < 10; i++) {
                         const title = details[i]['title'];
                         const count = details[i]['count'];
-                        const creater = details[i]['creater']
+                        const creator = details[i]['creator']
                         const content_url = details[i]['content_url'];
                         const desc = details[i]['desc'];
                         const comments = details[i]['comment'];
                         const image_url = getImageUrl(content_url.substring(9, content_url.length));
-                        console.log(image_url)
 
                         // comment 내용 가져옴
                         let commentBox = '';
@@ -122,23 +170,35 @@
                             }
                         }
                         let temp_html = `
-                        <div class="card mb-3 card-box">
-                            <div class="row g-0">
-                                <div class="col-md-4 box-profile">
-                                    <img src="${image_url}" id="img-tag${i}" class="img-fluid rounded-start" alt="...">
-                                </div>
-                                <div class="col-md-8 card-scroll">
-                                    <div class="card-body" id="card-body-box">
-                                        <p id="title-tag${i}">${title}</p>
-                                        ${commentBox}
-                                        <p class="card-text"><small class="text-muted">${desc}</small></p>
-                                        <textarea class="form-control" id="comment${i}" rows="3" placeholder="내용 입력"></textarea>
-                                        <button onclick="addComment(${i})"type="button" class="btn btn-primary">add comment</button>
+                        <div class="empty-box"></div>
+                        <div class="cards-box" id="cards-box">
+                            <div class="image-box">
+                                <img id="img-tag${i}" class="img-fluid rounded-start" alt="..."src="${image_url}" onerror="this.src='/static/file-2021-09-16-00-13-15.jpg';" />
+                            </div>
+                            <div class="middle-all">
+                                <div class="middle-box">
+                                    <div class="card-body">
+                                        <h5 id="title-tag${i}" class="card-title">${title}</h5>
+                                        <p class="card-text">${desc}</p>
+                                        <p class="card-text">${creator} / ${count}</p>
                                     </div>
                                 </div>
+                                <div class="btn-box">
+                                    <a href="https://www.youtube.com/${content_url}" class="btn btn-primary">영상 바로가기</a>
+                                </div>
+                             </div>
+                            <div class="comment-box">
+                                <div class="inner-comment-box">
+                                    ${commentBox}
+                                </div>
+                                <div class="inner-input-box">
+                                    <textarea class="form-control" id="comment${i}" rows="1" placeholder="내용 입력"></textarea>
+                                    <button onclick="addComment(${i})"type="button" class="btn btn-primary">add comment</button>
+                                </div>
                             </div>
-                        </div>
-                        `
+                            </div>
+                            
+                            `
 
                         $('#container').append(temp_html);
 
@@ -147,6 +207,7 @@
 
             })
         }
+
         function modifyComment(i, j) {
             let title = $(`#title-tag${i}`).text();
             let content = $(`#edit-input-box${i}${j}`).val();
@@ -226,7 +287,9 @@
         }
         // delete Comment Function
         function deleteComment(i, j) {
+            console.log("enter delete");
             let title = $(`#title-tag${i}`).text();
+
 
             let form_data = new FormData();
             form_data.append("section_give", "{{section}}");
@@ -247,172 +310,135 @@
             });
 
         }
-
-
-        function posting() {
-            let title = $('#title').val();
-            let content = $("#content").val();
-
-            let file = $('#file')[0].files[0];
-            let form_data = new FormData();
-
-            form_data.append("file_give", file);
-            form_data.append("title_give", title);
-            form_data.append("content_give", content);
-            $.ajax({
-                type: "POST",
-                url: "/detail",
-                data: form_data,
-                cache: false,
-                contentType: false,
-                processData: false,
-                success: function (response) {
-                    alert(response["msg"])
-                    window.location.reload();
-                }
-            });
-        }
     </script>
 </head>
 
 <body>
-    <header class="header">
-        <div class="header-logo">
-            <a href="/">
-                <h1>DEUKGYUN</h1>
-            </a>
-        </div>
-        </div>
-        <div class="header-gnb">
-            <ul>
-                <li><a href="http://localhost:5000/detail_page/{{user_info.username}}/chest">가슴(chest)</a></li>
-                <li><a href="http://localhost:5000/detail_page/{{user_info.username}}/back">등(back)</a></li>
-                <li><a href="http://localhost:5000/detail_page/{{user_info.username}}/obtuse">대둔근(obtuse)</a></li>
-                <li><a href="http://localhost:5000/detail_page/{{user_info.username}}/arm">팔(arm)</a></li>
-                <li><a href="http://localhost:5000/detail_page/{{user_info.username}}/abs">복근(abs)</a></li>
-                <li><a href="http://localhost:5000/detail_page/{{user_info.username}}/leg">하체(leg)</a></li>
-            </ul>
-        </div>
-    </header>
-    <section class="hero is-white">
-        <div class="hero-body" style="padding-bottom:1rem;margin:auto;min-width: 400px">
-            <article class="media">
-                <button onclick="sign_out()">asdasdasdasdsaa</button>
-                <figure class="media-left" style="align-self: center">
-                    <a class="image is-96x96" href="/">
-                        <img class="is-rounded" src="{{ url_for('static', filename=user_info.profile_pic_real) }}">
-                    </a>
-                </figure>
-                <div class="media-content">
-                    <div class="content">
-                        <p>
-                            <strong>{{ user_info.nickname }}</strong> <small>@{{ user_info.username }}</small>
-                            <br>
-                            {{ user_info.introduce }}
-                        </p>
-                    </div>
-                </div>
-            </article>
-
-            <div class="nav-box">
-                <nav id="btn-me" class="level is-mobile" style="margin-top: 3rem">
-                    <a class="button level-item has-text-centered is-sparta" aria-label="edit"
-                        onclick='$("#modal-edit").addClass("is-active")'>
-                        프로필 수정&nbsp;&nbsp;&nbsp;<span class="icon is-small">
-                            <i class="fa fa-pencil" aria-hidden="true"></i></span>
-                    </a>
-                    <a class="button level-item has-text-centered is-sparta is-outlined" aria-label="logout"
-                        onclick="sign_out()">
-                        로그아웃&nbsp;&nbsp;&nbsp;
-                        <span class="icon is-small">
-                            <i class="fa fa-sign-out" aria-hidden="true"></i></span>
-                    </a>
-                </nav>
+    <div class="wrap">
+        <!-- header / nav -->
+        <header class="header">
+            <div class="header-logo">
+                <a href="/">
+                    <h1>DEUKGYUN</h1>
+                </a>
             </div>
-
-        </div>
-    </section>
-    <div class="modal" id="modal-edit">
-        <div class="modal-background" onclick='$("#modal-edit").removeClass("is-active")'></div>
-        <div class="modal-content">
-            <div class="box">
+            <div class="header-gnb">
+                <ul>
+                    <li><a href="http://localhost:5000/detail_page/{{user_info.username}}/chest">가슴(chest)</a></li>
+                    <li><a href="http://localhost:5000/detail_page/{{user_info.username}}/back">등(back)</a></li>
+                    <li><a href="http://localhost:5000/detail_page/{{user_info.username}}/obtuse">대둔근(obtuse)</a></li>
+                    <li><a href="http://localhost:5000/detail_page/{{user_info.username}}/arm">팔(arm)</a></li>
+                    <li><a href="http://localhost:5000/detail_page/{{user_info.username}}/abs">복근(abs)</a></li>
+                    <li><a href="http://localhost:5000/detail_page/{{user_info.username}}/leg">하체(leg)</a></li>
+                </ul>
+            </div>
+        </header>
+        <!-- profile -->
+        <section class="hero is-white">
+            <div class="hero-body" style="padding-bottom:1rem;margin:auto;min-width: 400px">
                 <article class="media">
+                    <figure class="media-left" style="align-self: center">
+                        <a class="image is-96x96" href="/">
+                            <img class="is-rounded" src="{{ url_for('static', filename=user_info.profile_pic_real) }}">
+                        </a>
+                    </figure>
                     <div class="media-content">
-                        <div class="field">
-                            <label class="label" for="input-name">이름</label>
-
-                            <p class="control">
-
-                                <input id="input-name" class="input" placeholder="홍길동" value="{{ user_info.nickname }}">
+                        <div class="content">
+                            <p>
+                                <strong>{{ user_info.nickname }}</strong> <small>@{{ user_info.username }}</small>
+                                <br>
+                                {{ user_info.introduce }}
                             </p>
                         </div>
-                        <div class="field">
-                            <label class="label" for="input-pic">프로필 사진</label>
-
-                            <div class="control is-expanded">
-                                <div class="file has-name">
-                                    <label class="file-label" style="width:100%">
-                                        <input id="input-pic" class="file-input" type="file" name="resume">
-                                        <span class="file-cta"><span class="file-icon"><i
-                                                    class="fa fa-upload"></i></span>
-                                            <span class="file-label">파일 선택</span>
-                                        </span>
-                                        <span id="file-name" class="file-name" style="width:100%;max-width:100%">{{
-                                            user_info.profile_pic }}</span>
-                                    </label>
-                                </div>
-
-                            </div>
-                        </div>
-                        <div class="field">
-                            <label class="label" for="textarea-about">나는 누구?</label>
-
-                            <p class="control">
-
-                                <textarea id="textarea-about" class="textarea"
-                                    placeholder="자기소개하기">{{ user_info.introduce }}</textarea>
-                            </p>
-                        </div>
-                        <nav class="level is-mobile">
-                            <div class="level-left">
-
-                            </div>
-                            <div class="level-right">
-                                <div class="level-item">
-                                    <a class="button is-sparta" onclick="update_profile()">업데이트</a>
-                                </div>
-                                <div class="level-item">
-                                    <a class="button is-sparta is-outlined"
-                                        onclick='$("#modal-edit").removeClass("is-active")'>취소</a>
-                                </div>
-                            </div>
-                        </nav>
                     </div>
                 </article>
+                <!-- when you click the profile modification -->
+                <div class="nav-box">
+                    <nav id="btn-me" class="level is-mobile" style="margin-top: 3rem">
+                        <a class="button level-item has-text-centered is-sparta" aria-label="edit"
+                            onclick='$("#modal-edit").addClass("is-active")'>
+                            프로필 수정&nbsp;&nbsp;&nbsp;<span class="icon is-small">
+                                <i class="fa fa-pencil" aria-hidden="true"></i></span>
+                        </a>
+                        <a class="button level-item has-text-centered is-sparta is-outlined" aria-label="logout"
+                            onclick="sign_out()">
+                            로그아웃&nbsp;&nbsp;&nbsp;
+                            <span class="icon is-small">
+                                <i class="fa fa-sign-out" aria-hidden="true"></i></span>
+                        </a>
+                    </nav>
+                </div>
+                <!-- end -->
             </div>
+
+        </section>
+        <!--  -->
+        <div class="modal" id="modal-edit">
+            <div class="modal-background" onclick='$("#modal-edit").removeClass("is-active")'></div>
+            <div class="modal-content">
+                <div class="box">
+                    <article class="media">
+                        <div class="media-content">
+                            <div class="field">
+                                <label class="label" for="input-name">이름</label>
+
+                                <p class="control">
+
+                                    <input id="input-name" class="input" placeholder="홍길동"
+                                        value="{{ user_info.nickname }}">
+                                </p>
+                            </div>
+                            <div class="field">
+                                <label class="label" for="input-pic">프로필 사진</label>
+
+                                <div class="control is-expanded">
+                                    <div class="file has-name">
+                                        <label class="file-label" style="width:100%">
+                                            <input id="input-pic" class="file-input" type="file" name="resume">
+                                            <span class="file-cta"><span class="file-icon"><i
+                                                        class="fa fa-upload"></i></span>
+                                                <span class="file-label">파일 선택</span>
+                                            </span>
+                                            <span id="file-name" class="file-name" style="width:100%;max-width:100%">{{
+                                                user_info.profile_pic }}</span>
+                                        </label>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label class="label" for="textarea-about">나는 누구?</label>
+
+                                <p class="control">
+
+                                    <textarea id="textarea-about" class="textarea"
+                                        placeholder="자기소개하기">{{ user_info.introduce }}</textarea>
+                                </p>
+                            </div>
+                            <nav class="level is-mobile">
+                                <div class="level-left">
+
+                                </div>
+                                <div class="level-right">
+                                    <div class="level-item">
+                                        <a class="button is-sparta" onclick="update_profile()">업데이트</a>
+                                    </div>
+                                    <div class="level-item">
+                                        <a class="button is-sparta is-outlined"
+                                            onclick='$("#modal-edit").removeClass("is-active")'>취소</a>
+                                    </div>
+                                </div>
+                            </nav>
+                        </div>
+                    </article>
+                </div>
+            </div>
+            <button class="modal-close is-large" aria-label="close"
+                onclick='$("#modal-edit").removeClass("is-active")'></button>
         </div>
-        <button class="modal-close is-large" aria-label="close"
-            onclick='$("#modal-edit").removeClass("is-active")'></button>
-    </div>
-    <div class="jumbotron jumbotron-fluid">
-        <h1>TEST</h1>
-        <div class="posting-box">
-            <div class="custom-file">
-                <input type="file" class="custom-file-input" id="file">
-                <label class="custom-file-label" for="file">사진 선택하기</label>
-            </div>
-            <div class="form-group">
-                <input type="email" class="form-control" id="title" placeholder="사진 제목">
-            </div>
-            <div class="form-group">
-                <textarea class="form-control" id="content" rows="3" placeholder="내용 입력">
-                        </textarea>
-            </div>
-            <button onclick="posting()" type="button" class="btn btn-primary">저장하기</button>
+        <!-- add card! -->
+        <div id="container">
         </div>
-    </div>
-    <div id="container">
-    </div>
     </div>
 </body>
 

@@ -11,7 +11,6 @@ client = MongoClient('mongodb://52.79.249.178', 27017, username="test", password
 db = client.muscle_course
 
 app = Flask(__name__)
-
 SECRET_KEY = 'SPARTA'
 
 # sg_ login
@@ -175,20 +174,7 @@ def save_img():
         return jsonify({"result": "success", 'msg': '프로필을 업데이트했습니다.'})
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
         return redirect(url_for("home"))
-###############################################################
-
-
-# @app.route('/detail_page/<username>')
-# def detail(username):
-#     token_receive = request.cookies.get('mytoken')
-#     try:
-#         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
-#         status = (username == payload["id"])  # 내 프로필이면 True, 다른 사람 프로필 페이지면 False
-#         user_info = db.users.find_one({"username": username}, {"_id": False})
-#         print(user_info)
-#         return render_template('detail.html', user_info=user_info, status=status)
-#     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
-#         return redirect(url_for("home"))
+#################################################################
 
 @app.route('/detail_page/<username>', defaults={'section': 'chest'}, methods=['GET'])
 @app.route('/detail_page/<username>/<section>')
@@ -227,39 +213,6 @@ def show_detail():
         details = list(db.chest.find({}, {'_id':False}))    
 
     return jsonify({'all_detail': details})
-
-# @app.route('/detail/<username>', defaults={'section': 'chest'}, methods=['GET'])
-# @app.route('/detail/<username>/<section>')
-# def show_detail(username, section):
-#     print(section)
-#     details = list(db.detail.find({}, {'_id':False}))
-#     return jsonify({'all_detail': details}, {'section': section})
-
-
-
-# 카드 저장
-@app.route('/detail', methods=['POST'])
-def save_detail():
-    title_receive = request.form['title_give']
-    content_receive = request.form['content_give']
-    file = request.files["file_give"]
-    comment = []
-
-    today = datetime.now()
-    mytime = today.strftime("%Y-%m-%d-%H-%M-%S")
-
-    filename = f"file-{mytime}"
-    save_to = f"static/{filename}.jpg"
-    file.save(save_to)
-
-    doc = {
-        'title': title_receive,
-        'content': content_receive,
-        'file': save_to,
-        'comment': comment
-    }
-    db.detail.insert_one(doc)
-    return jsonify({'msg': 'POST 요청 완료!'})
 
 # add_comment
 @app.route('/detail_page/<username>/add_comment', methods=['POST'])
@@ -305,14 +258,12 @@ def add_comment(username):
 # modify_comment
 @app.route('/detail_page/<username>/modify_comment', methods=['POST'])
 def modify_comment(username):
-    print("1111")
     # 추가할 카드의 ID 받기
 
     section_receive = request.form['section_give']
     title_receive = request.form['title_give']
     idx_receive = request.form['idx_give']
     content_receive = request.form['content_give']
-    
     
 
     if section_receive == "chest":
