@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bs-custom-file-input/dist/bs-custom-file-input.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Jua', sans-serif;
+        }
+
+        .wrap {
+            width: 1000px;
+            margin: auto;
+        }
+
+        .card-box {
+            height: 300px;
+            max-width: 1000px;
+            margin-top: 50px;
+        }
+
+        .box-profile {
+            width: 250px;
+            height: 300px;
+        }
+
+        .img-fluid {
+            display: block;
+            height: 300px;
+            border-right: 1px solid rgba(0, 0, 0, .125);
+        }
+
+        .edit_btn {
+            background-color: red;
+        }
+
+        .comment-scroll {
+            float: left;
+            overflow-y: auto;
+        }
+
+        .card-scroll {
+            height: 300px;
+            overflow-y: auto;
+
+        }
+    </style>
+    <script>
+        // 로딩 후, 즉시 실행 부분 listing function 호출
+        $(document).ready(function () {
+            bsCustomFileInput.init();
+            listing();
+        })
+
+        // 로딩시 호출(화면에 내용 뿌려줌)
+        function listing() {
+            $.ajax({
+                type: "GET",
+                url: "detail",
+                data: {},
+                success: function (response) {
+                    let details = response["all_detail"];
+                    console.log(details);
+                    for (let i = 0; i < details.length; i++) {
+                        let title = details[i]['title'];
+                        let content = details[i]['content'];
+                        let file = details[i]['file'];
+                        let comments = details[i]['comment'];
+
+                        // comment 내용 가져옴
+                        let commentBox = '';
+                        for (let j = 0; j < comments.length; j++) {
+                            let comment = comments[j]['comment'];
+                            // 로그인한 당사자인 경우 삭제, 편집 기능을 부여
+                            if (comments[j]['nickname'] == "anonymous") {
+                                commentBox += `<p class="card-text">
+                                    <span id="comment-tag${i}${j}">${comment}</span>
+                                     <button id="delete-btn${i}${j}" onclick="deleteComment(${i}, ${j})" type="button" class="btn btn-link">delete</button>
+                                    <button id="edit-btn${i}${j}"  onclick="editComment(${i}, ${j})" type="button" class="btn btn-link">edit</button>
+                                </p>
+                                `
+                            }
+                            else {
+                                commentBox += `<p class="card-text">${comment}</p>`
+                            }
+                        }
+
+
+                        let temp_html = `
+                        <div class="card mb-3 card-box">
+                            <div class="row g-0">
+                                <div class="col-md-4 box-profile">
+                                    <img src="${file}" id="img-tag${i}" class="img-fluid rounded-start" alt="...">
+                                </div>
+                                <div class="col-md-8 card-scroll">
+                                    <div class="card-body" id="card-body-box">
+                                        ${commentBox}
+                                        <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                                        <textarea class="form-control" id="comment${i}" rows="3" placeholder="내용 입력"></textarea>
+                                        <button onclick="addComment(${i})"type="button" class="btn btn-primary">add comment</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        `
+
+                        $('#container').append(temp_html);
+
+                    }
+                }
+            })
+        }
+        function modifyComment(i, j) {
+            let imgSrc = $(`#img-tag${i}`).attr('src');
+            let content = $(`#edit-input-box${i}${j}`).val();
+            let form_data = new FormData();
+            form_data.append("imgSrc_give", imgSrc);
+            form_data.append("idx_give", j);
+            form_data.append("content_give", content);
+
+            $.ajax({
+                type: "POST",
+                url: "/detail/modify_comment",
+                data: form_data,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    alert(response["msg"])
+                    window.location.reload();
+                }
+            });
+        }
+
+
+        // comment 수정하지 않고 취소하기
+        function cancelComment(i, j) {
+            //input태그를 다시 span태그로 돌려놓기
+            $(`#edit-input-box${i}${j}`).contents().unwrap().wrap(`<span id="comment-tag${i}${j}"></span>`);
+
+
+            //confirm 버튼을 delete 버튼으로 변경
+            $(`#confirm-btn${i}${j}`).contents().unwrap().wrap(`<button id="delete-btn${i}${j}" onclick="deleteComment(${i}, ${j})" type="button" class="btn btn-link"></button>`);
+            $(`#delete-btn${i}${j}`).text('delete');
+
+            //back-btn을 edit-btn으로 변경
+            $(`#back-btn${i}${j}`).contents().unwrap().wrap(`<button id="edit-btn${i}${j}" onclick="editComment(${i}, ${j})" type="button" class="btn btn-link"></button>`);
+            $(`#edit-btn${i}${j}`).text('edit');
+        }
+        function editComment(i, j) {
+
+            console.log(`${i}/${j}`);
+            // input창으로 변경
+            $(`#comment-tag${i}${j}`).contents().unwrap().wrap(`<input id="edit-input-box${i}${j}"/>`);
+
+            // delete-btn => confirm-btn
+            $(`#delete-btn${i}${j}`).contents().unwrap().wrap(`<button id="confirm-btn${i}${j}" onclick="modifyComment(${i}, ${j})" type="button" class="btn btn-link"></button>`);
+            $(`#confirm-btn${i}${j}`).text('confirm');
+
+            // edit-btn => back-btn
+            $(`#edit-btn${i}${j}`).contents().unwrap().wrap(`<button id="back-btn${i}${j}" onclick="cancelComment(${i},${j})" type="button" class="btn btn-link"></button>`);
+            $(`#back-btn${i}${j}`).text('back');
+
+        }
+        //
+        function addComment(idx) {
+            let comment = $(`#comment${idx}`).val()
+            let imgSrc = $(`#img-tag${idx}`).attr('src');
+
+            let form_data = new FormData();
+            form_data.append("nickname_give", "anonymous"); // 나중에 로그인 한 사람의 요소를 가지고 와야 함.
+            form_data.append("imgSrc_give", imgSrc)
+            form_data.append("comment_give", comment);
+
+            $.ajax({
+                type: "POST",
+                url: "/detail/add_comment",
+                data: form_data,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    alert(response["msg"])
+                    window.location.reload();
+                }
+            });
+        }
+
+        function deleteComment(i, j) {
+            let imgSrc = $(`#img-tag${i}`).attr('src');
+
+            let form_data = new FormData();
+            form_data.append("imgSrc_give", imgSrc);
+            form_data.append("idx_give", j);
+
+            $.ajax({
+                type: "POST",
+                url: "/detail/delete_comment",
+                data: form_data,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    alert(response["msg"])
+                    window.location.reload();
+                }
+            });
+
+        }
+
+
+        function posting() {
+            let title = $('#title').val();
+            let content = $("#content").val();
+
+            let file = $('#file')[0].files[0];
+            let form_data = new FormData();
+
+            form_data.append("file_give", file);
+            form_data.append("title_give", title);
+            form_data.append("content_give", content);
+            $.ajax({
+                type: "POST",
+                url: "/detail",
+                data: form_data,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    alert(response["msg"])
+                    window.location.reload();
+                }
+            });
+        }
+    </script>
+</head>
+
+<body>
+    <div class="wrap">
+        <div class="jumbotron jumbotron-fluid">
+            <h1>TEST</h1>
+            <div class="posting-box">
+                <div class="custom-file">
+                    <input type="file" class="custom-file-input" id="file">
+                    <label class="custom-file-label" for="file">사진 선택하기</label>
+                </div>
+                <div class="form-group">
+                    <input type="email" class="form-control" id="title" placeholder="사진 제목">
+                </div>
+                <div class="form-group">
+                    <textarea class="form-control" id="content" rows="3" placeholder="내용 입력">
+                        </textarea>
+                </div>
+                <button onclick="posting()" type="button" class="btn btn-primary">저장하기</button>
+            </div>
+        </div>
+        <div id="container">
+        </div>
+    </div>
+</body>
+
+</html>
