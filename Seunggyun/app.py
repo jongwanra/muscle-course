@@ -27,7 +27,7 @@ def member():
     return render_template('member.html')
 
 
-# 메인 페이지 랜더링 (토큰 검사)
+# 메인 페이지 랜더링 (토큰 검사) / check
 @app.route('/')
 def home():
     token_receive = request.cookies.get('mytoken')
@@ -56,7 +56,7 @@ def user(username):
         return redirect(url_for("home"))
 
 
-# 회원가입 기능 (클라에게 받은 정보 암호화(비번) 후 디비 저장)
+# 회원가입 기능 (클라에게 받은 정보 암호화(비번) 후 디비 저장) / check
 @app.route('/sign_up/save', methods=['POST'])
 def sign_up():
     username_receive = request.form['username_give']
