@@ -101,7 +101,9 @@ def sign_in():
             'id': username_receive,
             'exp': datetime.utcnow() + timedelta(seconds=60 * 60 * 24)  # 로그인 24시간 유지
         }
+        # 배포할 때! 
         token = jwt.encode(payload, SECRET_KEY, algorithm='HS256').decode('utf-8')
+        # token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
         return jsonify({'result': 'success', 'token': token})
     # 찾지 못하면
     else:
@@ -114,9 +116,11 @@ def posting():
     token_receive = request.cookies.get('mytoken')
     try:
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+        # 포스팅하기
         user_info = db.users.find_one({"username": payload["id"]})
         comment_receive = request.form["comment_give"]
         date_receive = request.form["date_give"]
+        print(type(date_receive))
         doc = {
             "username": user_info["username"],
             "profile_name": user_info["profile_name"],
@@ -124,7 +128,7 @@ def posting():
             "comment": comment_receive,
             "date": date_receive
         }
-        db.posts.insert_one(doc)
+        db.looser.insert_one(doc)
         return jsonify({"result": "success", 'msg': '포스팅 성공'})
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
         return redirect(url_for("home"))
@@ -159,23 +163,28 @@ def save_img():
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
         username = payload["id"]
         name_receive = request.form["name_give"]
-        about_receive = request.form["about_give"]
         new_doc = {
-            "profile_name": name_receive,
-            "profile_info": about_receive
+            "profile_name": name_receive
         }
         if 'file_give' in request.files:
             file = request.files["file_give"]
             filename = secure_filename(file.filename)
             extension = filename.split(".")[-1]
             file_path = f"profile_pics/{username}.{extension}"
-            file.save("./static/"+file_path)
+            file.save("./static/" + file_path)
             new_doc["profile_pic"] = filename
             new_doc["profile_pic_real"] = file_path
-        db.users.update_one({'username': payload['id']}, {'$set':new_doc})
+        db.users.update_one({'username': payload['id']}, {'$set': new_doc})
         return jsonify({"result": "success", 'msg': '프로필을 업데이트했습니다.'})
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
         return redirect(url_for("home"))
+
+@app.route('/join', methods=['GET'])
+def join():
+    details = list(db.looser.find({}).sort("date", -1).limit(7))
+    for post in details:
+        post["_id"] = str(post["_id"])
+    return jsonify({'all_details': details})
 #################################################################
 
 @app.route('/detail_page/<username>', defaults={'section': 'chest'}, methods=['GET'])

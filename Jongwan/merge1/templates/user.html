@@ -16,7 +16,7 @@
     <header class="header">
         <div class="header-logo">
             <a href="/">
-                <h1>DEUKGYUN</h1>
+                <h1>DEUKGEUN</h1>
             </a>
         </div>
         </a>
@@ -26,7 +26,7 @@
             <ul>
                 <li><a href="/detail_page/{{user_info.username}}/chest">가슴(chest)</a></li>
                 <li><a href="/detail_page/{{user_info.username}}/back">등(back)</a></li>
-                <li><a href="/detail_page/{{user_info.username}}/shoulder">대둔근(obtuse)</a></li>
+                <li><a href="/detail_page/{{user_info.username}}/obtuse">대둔근(obtuse)</a></li>
                 <li><a href="/detail_page/{{user_info.username}}/arm">팔(arm)</a></li>
                 <li><a href="/detail_page/{{user_info.username}}/abs">복근(abs)</a></li>
                 <li><a href="/detail_page/{{user_info.username}}/leg">하체(leg)</a></li>
@@ -37,8 +37,10 @@
             </ul>
         </div>
     </header>
-    <section class="hero is-white">
-        <div class="hero-body" style="padding-bottom:1rem;margin:auto;min-width: 400px">
+
+
+    <section class="hero is-white" id="hero-body">
+        <div class="hero-body" style="padding-bottom:2rem;margin:auto;min-width: 400px;min-height: 70px">
             <article class="media">
 
                 <figure class="media-left" style="align-self: center">
@@ -46,6 +48,7 @@
                         <img class="is-rounded" src="{{ url_for('static', filename=user_info.profile_pic_real) }}">
                     </a>
                 </figure>
+
                 <div class="media-content">
                     <div class="content">
                         <p>
@@ -57,11 +60,12 @@
                 </div>
             </article>
 
+
             <div class="nav-box">
                 <nav id="btn-me" class="level is-mobile" style="margin-top: 3rem">
                     <a class="button level-item has-text-centered is-sparta" aria-label="edit"
                         onclick='$("#modal-edit").addClass("is-active")'>
-                        프로필 수정&nbsp;&nbsp;&nbsp;<span class="icon is-small">
+                        사진 업데이트&nbsp;&nbsp;&nbsp;<span class="icon is-small">
                             <i class="fa fa-pencil" aria-hidden="true"></i></span>
                     </a>
                     <a class="button level-item has-text-centered is-sparta is-outlined" aria-label="logout"
@@ -72,9 +76,15 @@
                     </a>
                 </nav>
             </div>
-
         </div>
+
+
+
+
     </section>
+
+
+
     <div class="modal" id="modal-edit">
         <div class="modal-background" onclick='$("#modal-edit").removeClass("is-active")'></div>
         <div class="modal-content">
@@ -107,15 +117,8 @@
 
                             </div>
                         </div>
-                        <div class="field">
-                            <label class="label" for="textarea-about">나는 누구?</label>
 
-                            <p class="control">
 
-                                <textarea id="textarea-about" class="textarea"
-                                    placeholder="자기소개하기">{{ user_info.introduce }}</textarea>
-                            </p>
-                        </div>
                         <nav class="level is-mobile">
                             <div class="level-left">
 
@@ -137,6 +140,101 @@
         <button class="modal-close is-large" aria-label="close"
             onclick='$("#modal-edit").removeClass("is-active")'></button>
     </div>
+
+
+
+    <div class="control" id="input-today">
+        <input class="input is-focused input is-rounded" type="text" placeholder="실시간 운동 피드" id="dayPost">
+    </div>
+
+
+
+
+
+    <div class="box has-text-centered" id="input-save">
+        <button class="button is-link is-rounded" onclick="checkDay()">SAVE</button>
+    </div>
+
+
+    <div class="box" id="posting-box">
+        <article class="media">
+            <div class="media-content">
+                <div class="content">
+                    <p>
+                        <strong></strong><small></small> <small></small>
+                        <br>
+
+                    </p>
+                </div>
+            </div>
+        </article>
+    </div>
+
+
+    <script>
+
+        $(document).ready(function () {
+            join()
+        })
+
+        function checkDay() {
+            let comment = $("#dayPost").val()
+            let today = new Date().toISOString()
+            $.ajax({
+                type: "POST",
+                url: "/posting",
+                data: {
+                    comment_give: comment,
+                    date_give: today
+                },
+                success: function (response) {
+                    window.location.reload()
+                }
+            })
+        }
+
+        function join() {
+            $.ajax({
+                type: "GET",
+                url: "/join",
+                data: {},
+                success: function (response) {
+                    let joins = response['all_details']
+
+                    for (let i = 0; i < joins.length; i++) {
+                        let title = joins[i]['profile_name']
+                        let comment = joins[i]['comment']
+                        let profile = joins[i]['profile_pic_real']
+                        let time_post = new Date(joins[i]['date'])
+                        let time_before = time2str(time_post)
+
+                        let temp_html = `
+
+<article class="media">
+            <div class="media-left">
+            </div>
+            <div class="media-content">
+                <div class="content">
+                    <p>
+                        <strong>${joins[i]['profile_name']}</strong> <small></small> <small>${time_before}</small>
+                        <br>
+                        ${joins[i]['comment']}
+                    </p>
+                </div>
+            </div>
+        </article>`
+
+
+                        $('#posting-box').append(temp_html)
+
+
+                    }
+                }
+            })
+        }
+
+    </script>
+
 </body>
 
 </html>

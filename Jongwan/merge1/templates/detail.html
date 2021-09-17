@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
         integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='detail_style.css') }}" rel="stylesheet">
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 
     <!-- Optional JavaScript -->
@@ -28,90 +29,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
 
-    <style>
-        .wrap {
-            width: 1140px;
-            margin: 0 auto;
-        }
-
-        .cards-box {
-            width: 100%;
-            height: 300px;
-            margin: 0 auto 20px auto;
-            border-radius: 5px;
-            border: 1px solid rgb(85, 83, 83);
-
-        }
-
-        .image-box {
-            background-color: gray;
-            width: 33.333%;
-            height: 300px;
-            float: left;
-
-            background-image: url('https://i.ytimg.com/vi/cLzuFGoS5xc/sddefault.jpg');
-            background-position: center;
-            background-size: cover;
-        }
-
-        .middle-all {
-            width: 33.333%;
-            height: 300px;
-            margin: auto;
-            float: left;
-            border-left: 1px solid rgb(85, 83, 83);
-            border-right: 1px solid rgb(85, 83, 83);
-        }
-
-        .middle-box {
-            width: 350px;
-            height: 252px;
-            float: left;
-        }
-
-        .btn-box {
-            width: 350px;
-            height: 48px;
-            margin-left: 20px;
-        }
-
-
-        .comment-box {
-            width: 33.333%;
-            height: 300px;
-            float: left;
-
-        }
-
-        .inner-comment-box {
-            width: 100%;
-            height: 73%;
-        }
-
-        .inner-input-box {
-            width: 100%;
-            height: 28%;
-        }
-
-        .comment-scroll {
-            float: left;
-            overflow-y: auto;
-        }
-
-        .card-scroll {
-            height: 300px;
-            overflow-y: auto;
-        }
-
-        .empty-box {
-            width: 100%;
-            height: 20px;
-        }
-
-        #container {
-            margin-top: 30px;
-        }
-    </style>
     <script>
         function getImageUrl(slicing_url) {
             return `https://i.ytimg.com/vi/${slicing_url}/sddefault.jpg`;
@@ -154,8 +71,8 @@
                                 <p class="card-text">
                                     <span id="comment-username${i}${j}">${username} : </span>
                                     <span id="comment-tag${i}${j}">${comment}</span>
-                                    <button id="delete-btn${i}${j}" onclick="deleteComment(${i}, ${j})" type="button" class="btn btn-link">delete</button>
-                                    <button id="edit-btn${i}${j}"  onclick="editComment(${i}, ${j})" type="button" class="btn btn-link">edit</button>
+                                    <button id="delete-btn${i}${j}" onclick="deleteComment(${i}, ${j})" type="button" class="btn btn-link">삭제</button>
+                                    <button id="edit-btn${i}${j}"  onclick="editComment(${i}, ${j})" type="button" class="btn btn-link">편집</button>
                                 </p>
                                 `
                             }
@@ -183,15 +100,19 @@
                                 </div>
                              </div>
                             <div class="comment-box">
-                                <div class="inner-comment-box">
-                                    ${commentBox}
-                                </div>
-                                <div class="inner-input-box">
-                                    <textarea class="form-control" id="comment${i}" rows="1" placeholder="내용 입력"></textarea>
-                                    <button onclick="addComment(${i})"type="button" class="btn btn-primary">add comment</button>
+                                <div class="inner-container">
+                                    <div class="inner-comment-box">
+                                        ${commentBox}
+                                    </div>
+                                    <div class="inner-input-box">
+                                        <div class="input-group mb-3">
+                                            <input type="text" id="comment${i}" class="form-control" placeholder="내용을 입력해주세요." aria-label="Recipient's username" aria-describedby="button-addon2">
+                                            <button onclick="addComment(${i})" class="btn btn-primary" type="button" id="button-addon2">댓글 달기</button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            </div>
+                        </div>
                             
                             `
 
@@ -230,6 +151,8 @@
 
         // comment 수정하지 않고 취소하기
         function cancelComment(i, j) {
+
+            $(`#comment-username${i}${j}`).show();
             //input태그를 다시 span태그로 돌려놓기
             $(`#edit-input-box${i}${j}`).contents().unwrap().wrap(`<span id="comment-tag${i}${j}"></span>`);
 
@@ -244,9 +167,14 @@
         }
         function editComment(i, j) {
 
-            console.log(`${i}/${j}`);
+
+            // 편집 전 댓글 저장해둠.
+            const before_comment = $(`#comment-tag${i}${j}`).text()
+
             // input창으로 변경
-            $(`#comment-tag${i}${j}`).contents().unwrap().wrap(`<input id="edit-input-box${i}${j}"/>`);
+            $(`#comment-tag${i}${j}`).contents().unwrap().wrap(`<input id="edit-input-box${i}${j}" value="${before_comment}"/>`);
+            $(`#comment-username${i}${j}`).hide();
+            $(`#edit-input-box${i}${j}`).focus();
 
             // delete-btn => confirm-btn
             $(`#delete-btn${i}${j}`).contents().unwrap().wrap(`<button id="confirm-btn${i}${j}" onclick="modifyComment(${i}, ${j})" type="button" class="btn btn-link"></button>`);
@@ -314,7 +242,7 @@
         <header class="header">
             <div class="header-logo">
                 <a href="/">
-                    <h1>DEUKGYUN</h1>
+                    <h1>DEUKGEUN</h1>
                 </a>
             </div>
             <div class="header-gnb">
