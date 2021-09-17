@@ -10,7 +10,7 @@
 }
 
 .header {
-    height: 140px;
+    height: 150px;
     text-align: center;
     border-bottom: 1px solid #999;
     box-sizing: border-box;
@@ -19,9 +19,10 @@
 
 .header-logo h1 {
     font: bold 40px 'arial';
-    padding-top: 13px;
+    padding-top: 0px;
     letter-spacing: 1px;
-    margin-top: 0px;
+    margin-top: 30px;
+    color: #166cea;
 }
 
 .header-logo p {
@@ -83,3 +84,32 @@
 .login-font {
     color: #166cea;
 }
+
+.box {
+    width: 800px;
+    margin: auto;
+}
+
+.media-content {
+    color: red;
+}
+
+#input-today {
+    width: 800px;
+    margin: auto;
+}
+
+#input-save {
+    width: 800px;
+    margin: auto;
+    background: transparent;
+}
+
+
+
+body {
+        height: 300vh;
+
+        background-repeat : no-repeat;
+        background-size : cover;
+      }
