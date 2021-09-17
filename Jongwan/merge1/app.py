@@ -96,14 +96,16 @@ def sign_in():
     result = db.users.find_one({'username': username_receive, 'password': pw_hash})
     
     if result is not None:
+        print("entered if")
         payload = {
             'id': username_receive,
             'exp': datetime.utcnow() + timedelta(seconds=60 * 60 * 24)  # 로그인 24시간 유지
         }
-        token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
+        token = jwt.encode(payload, SECRET_KEY, algorithm='HS256').decode('utf-8')
         return jsonify({'result': 'success', 'token': token})
     # 찾지 못하면
     else:
+        print("entered else")
         return jsonify({'result': 'fail', 'msg': '아이디/비밀번호가 일치하지 않습니다.'})
 
 # 메인 페이지의 포스팅 기능
@@ -198,7 +200,7 @@ def show_detail():
     if section_receive == "chest":
         details = list(db.chest.find({}, {'_id':False}))    
     elif section_receive == "arm":
-        details = list(db.back.find({}, {'_id':False}))    
+        details = list(db.arm.find({}, {'_id':False}))    
     # 등근육
     elif section_receive == "back":
         details = list(db.back.find({}, {'_id':False}))
@@ -210,7 +212,7 @@ def show_detail():
         details = list(db.obtuse.find({}, {'_id':False}))    
     # 하체 근육
     elif section_receive == "leg":
-        details = list(db.chest.find({}, {'_id':False}))    
+        details = list(db.leg.find({}, {'_id':False}))    
 
     return jsonify({'all_detail': details})
 
