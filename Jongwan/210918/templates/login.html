@@ -49,6 +49,9 @@
                     } else {
                         alert(response['msg'])
                     }
+                },
+                error: function (error) {
+                    console.log(error);
                 }
             });
         }
