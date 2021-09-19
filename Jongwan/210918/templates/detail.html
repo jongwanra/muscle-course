@@ -28,94 +28,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bs-custom-file-input/dist/bs-custom-file-input.js"></script>
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
-
-    <script>
-        // 로딩 후, 즉시 실행 부분 listing function 호출
-        $(document).ready(function () {
-            bsCustomFileInput.init();
-            listing();
-        });
-
-        // 로딩시 호출(화면에 내용 뿌려줌)
-        function listing() {
-            let section_data = { section_give: '{{section}}' };
-
-            $.ajax({
-                type: 'GET',
-                url: '/detail',
-                dataType: 'json',
-                data: section_data,
-                success: function (response) {
-                    let details = response['all_detail'];
-                    for (let i = 0; i < 10; i++) {
-                        const title = details[i]['title'];
-                        const count = details[i]['count'];
-                        const creator = details[i]['creator'];
-                        const content_url = details[i]['content_url'];
-                        const desc = details[i]['desc'];
-                        const comments = details[i]['comment'];
-                        const image_url = getImageUrl(
-                            content_url.substring(9, content_url.length)
-                        );
-
-                        // comment 내용 가져옴
-                        let commentBox = '';
-                        for (let j = 0; j < comments.length; j++) {
-                            const comment = comments[j]['comment'];
-                            const username = comments[j]['username'];
-                            // 로그인한 당사자인 경우 삭제, 편집 기능을 부여
-                            if (username == '{{user_info.username}}') {
-                                commentBox += `<p class="card-text">
-                            <span id="comment-username${i}${j}">${username} : </span>
-                            <span id="comment-tag${i}${j}">${comment}</span>
-                            <button id="delete-btn${i}${j}" onclick="deleteComment(${i}, ${j})" type="button" class="btn btn-link">삭제</button>
-                            <button id="edit-btn${i}${j}"  onclick="editComment(${i}, ${j})" type="button" class="btn btn-link">편집</button>
-                        </p>`;
-                            } else {
-                                commentBox += `<p class="card-text"><span id="comment-username${i}${j}">${username} : </span>${comment}</p>`;
-                            }
-                        }
-                        let temp_html = `
-                      <div class="empty-box"></div>
-                      <div class="cards-box" id="cards-box">
-                          <div class="image-box">
-                              <img id="img-tag${i}" class="img-fluid rounded-start" alt="..."src="${image_url}" onError="this.src='/static/file-2021-09-16-00-13-15.jpg';" />
-                          </div>
-                          <div class="middle-all">
-                              <div class="middle-box">
-                                  <div class="card-body">
-                                      <h5 id="title-tag${i}" class="card-title">${title}</h5>
-                                      <p class="card-text">${desc}</p>
-                                      <p class="card-text">${creator} / ${count}</p>
-                                  </div>
-                              </div>
-                          <div class="btn-box">
-                              <a href="https://www.youtube.com/${content_url}" class="btn btn-primary">영상 바로가기</a>
-                          </div>
-                         </div>
-                        <div class="comment-box">
-                            <div class="inner-container">
-                                <div class="inner-comment-box">
-                                    ${commentBox}
-                                </div>
-                                <div class="inner-input-box">
-                                    <div class="input-group mb-3">
-                                        <input type="text" id="comment${i}" class="form-control" placeholder="내용을 입력해주세요." aria-label="Recipient's username" aria-describedby="button-addon2">
-                                        <button onclick="addComment(${i})" class="btn btn-primary" type="button" id="button-addon2">댓글 달기</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>`;
-                        $('#container').append(temp_html);
-                    }
-                }
-            })
-        }
-
-
-
-    </script>
 </head>
 
 <body>
@@ -204,8 +116,8 @@
                                                         class="fa fa-upload"></i></span>
                                                 <span class="file-label">파일 선택</span>
                                             </span>
-                                            <span id="file-name" class="file-name" style="width:100%;max-width:100%">{{
-                                                user_info.profile_pic }}</span>
+                                            <span id="file-name" class="file-name"
+                                                style="width:100%;max-width:100%">{{user_info.profile_pic }}</span>
                                         </label>
                                     </div>
 
@@ -243,6 +155,58 @@
         </div>
         <!-- add card! -->
         <div id="container">
+            {% for i, detail in enumerate(details) %}
+            <div class="empty-box"></div>
+            <div class="cards-box" id="cards-box">
+                <div class="image-box">
+                    {% set slicing_url = detail["content_url"][9:]%}
+                    <!-- why not working onError Attr?-->
+                    <img id="img-tag{{i}}" class="img-fluid rounded-start" alt="..."
+                        src="https://i.ytimg.com/vi/{{slicing_url}}/sddefault.jpg"
+                        onerror="this.onerror=null;this.src='https://placeimg.com/200/300/animals';" alt="not image" />
+                </div>
+                <div class="middle-all">
+                    <div class="middle-box">
+                        <div class="card-body">
+                            <h5 id="title-tag{{i}}" class="card-title">{{detail.title}}</h5>
+                            <p class="card-text">{{detail.desc}}</p>
+                            <p class="card-text">{{detail.creator}} / {{detail.count}}</p>
+                        </div>
+                    </div>
+                    <div class="btn-box">
+                        <a href="https://www.youtube.com/{{detail.content_url}}" class="btn btn-primary">영상 바로가기</a>
+                    </div>
+                </div>
+                <div class="comment-box">
+                    <div class="inner-container">
+                        <div class="inner-comment-box">
+                            {%for j, comment in enumerate(detail["comment"])%}
+                            <div class="personal-comment-box">
+                                <span id="comment-username{{i}}{{j}}"><b>{{comment.username}}</b></span>
+                                {% if comment.username == user_info.username %}
+                                <a id="delete-btn{{i}}{{j}}" href="javascript:;" class="a-tag-design"
+                                    onclick="deleteComment({{i}}, {{j}}, '{{section}}')">delete</a>
+                                /
+                                <a id="edit-btn{{i}}{{j}}" class="a-tag-design" href="javascript:;"
+                                    onclick="editComment({{i}}, {{j}}, '{{section}}', '{{user_info.username}}')">edit
+                                </a>
+                                <p id="comment-tag{{i}}{{j}}">{{comment.comment}}</p>
+                                {%endif%}
+                            </div>
+                            {%endfor%}
+                        </div>
+                        <div class="inner-input-box">
+                            <div class="input-group mb-3">
+                                <input type="text" id="comment{{i}}" class="form-control" placeholder="내용을 입력해주세요."
+                                    aria-label="Recipient's username" aria-describedby="button-addon2">
+                                <button onclick="addComment({{i}}, '{{section}}', '{{user_info.username}}')"
+                                    class="btn btn-primary" type="button" id="button-addon2">댓글 달기</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor%}
         </div>
     </div>
 </body>
