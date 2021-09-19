@@ -19,7 +19,7 @@
 
 - 윤승근([https://github.com/thelapssql0](https://github.com/thelapssql0))
 - 이종찬([https://github.com/qkskfka](https://github.com/qkskfka))
-- 류은솔([https://github.com/eunseolryu](https://github.com/eunseolryu))
+- 류은설([https://github.com/eunseolryu](https://github.com/eunseolryu))
 - 나종완([https://github.com/jongwanra](https://github.com/jongwanra))
 
 ## 🏃🏻‍♂️ 구현 기능
