@@ -3,8 +3,6 @@ from pymongo import MongoClient
 import jwt
 from datetime import datetime
 
-from pymongo.common import SERVER_SELECTION_TIMEOUT
-
 api_comment = Blueprint('api_comment', __name__, template_folder="templates")
 
 SECRET_KEY = 'SPARTA'

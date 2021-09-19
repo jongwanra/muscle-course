@@ -44,7 +44,7 @@
 
 ## 🖥️ API
 
-![Screen Shot 2021-09-19 at 7.44.41 PM.png](README%20c81ad65faadc417080194afbc4c6b132/Screen_Shot_2021-09-19_at_7.44.41_PM.png)
+![api.png](api.png)
 
  
 
