@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+
+    <title>득근</title>
+
+    <script>
+        $(document).ready(function () {
+            showReview();
+        });
+
+        function showReview() {
+            $.ajax({
+                type:'GET',
+                url:'/ms',
+                data:{},
+                success: function (response) {
+                    let show = response['all_muscles']
+                    for (let i = 0; i < show.length; i++) {
+                        let title = show[i]['title']
+                        if (title.length > 40) {
+                            title = title.slice(0, 40) + '...'
+                        }
+                        let count = show[i]['count']
+                        let desc = show[i]['desc']
+                        let content_url = show[i]['content_url']
+                        let creator = show[i]['creator']
+                        if (desc.length > 35) {
+                            desc = desc.slice(0, 35)+'...'
+                        }
+
+                        let temp_html = `<div class="cards-box" id="cards-box">
+                                        <div class="image-box"></div>
+                                        <div class="middle-all">
+                                            <div class="middle-box">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">${title}</h5>
+                                                    <p class="card-text">${desc}</p>
+                                                    <p class="card-text">${creator} / ${count}</p>
+                                                </div>
+                                            </div>
+                                             <div class="btn-box">
+                                                <a href="https://www.youtube.com/${content_url}" class="btn btn-primary">영상 바로가기</a>
+                                             </div>
+                                         </div>
+                                        <div class="comment-box"></div>
+                                        </div>`
+
+                        $('#container').append(temp_html)
+                    }
+                }
+            })
+        }
+
+
+    </script>
+
+    <style>
+        .wrap {
+            width: 1140px;
+        }
+
+        .cards-box {
+            width: 1050px;
+            height: 243px;
+            margin: 20px auto;
+        }
+
+        .image-box {
+            background-color: gray;
+            width: 350px;
+            height: 243px;
+            float: left;
+
+            background-image: url('https://i.ytimg.com/vi/cLzuFGoS5xc/sddefault.jpg');
+            background-position: center; background-size: cover;
+        }
+
+        .middle-all {
+            width: 350px;
+            height: 243px;
+            margin: auto;
+            float: left;
+        }
+
+        .middle-box {
+            width: 350px;
+            height: 185px;
+            float: left;
+        }
+
+        .btn-box {
+            width: 350px;
+            height: 48px;
+            margin-left: 20px;
+        }
+
+        .btn {
+            margin-bottom: 20px;
+        }
+
+        .comment-box {
+            background-color: gray;
+            width: 350px;
+            height: 243px;
+            float: left;
+
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <div id="container" >
+<!--<!—            <div class="cards-box" id="cards-box">—>-->
+<!--<!—                <div class="image-box"></div>—>-->
+<!--<!—                <div class="middle-box">—>-->
+<!--<!—                    <div class="card-body">—>-->
+<!--<!—                        <h5 class="card-title">title</h5>—>-->
+<!--<!—                        <p class="card-text">desc</p>—>-->
+<!--<!—                        <p class="card-text">creator / count</p>—>-->
+<!--<!—                    </div>—>-->
+<!--<!—                </div>   —>-->
+<!--<!—                <div class="btn-box">—>-->
+<!--<!—                    <a href="https://www.youtube.com/${content_url}" class="btn  { btn-primary">영상 바로가기</a>&ndash;&gt;—>-->
+<!--<!—                </div>—>-->
+<!--<!—                <div class="comment-box"></div>—>-->
+            </div>
+        </div>
+
+    </div>
+</body>
+
+</html>
