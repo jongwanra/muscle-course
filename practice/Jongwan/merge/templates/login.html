@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+    <link href="{{ url_for('static', filename='logins.css') }}" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+    <meta charset="UTF-8">
+    <title>로그인</title>
+    <script>
+        function gomember() {
+            window.location.replace('/member')
+        }
+
+        function sign_in() {
+            let username = $("#input-username").val()
+            let password = $("#input-password").val()
+
+            if (username == "") {
+                $("#help-id-login").text("아이디를 입력해주세요.")
+                $("#input-username").focus()
+                return;
+            } else {
+                $("#help-id-login").text("")
+            }
+
+            if (password == "") {
+                $("#help-password-login").text("비밀번호를 입력해주세요.")
+                $("#input-password").focus()
+                return;
+            } else {
+                $("#help-password-login").text("")
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "/sign_in",
+                data: {
+                    "username_give": username,
+                    "password_give": password
+                },
+                success: function (response) {
+                    if (response['result'] == 'success') {
+                        $.cookie('mytoken', response['token'], { path: '/' });
+                        window.location.replace("/")
+                    } else {
+                        alert(response['msg'])
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        }
+
+        // css
+        let id = $('#input-username');
+        let pw = $('#input-password');
+        let btn = $('#btn');
+    </script>
+</head>
+
+<body>
+    <section class="login-form">
+        <h1>DEUKGEUN</h1>
+        <div class="int-area">
+            <input type="text" id="input-username" class="input" placeholder="ID"><br>
+            <p id="help-id" class="help is-hidden">아이디는 5~20자 영문 숫자 특수문자</p>
+            <p id="help-id-login" class="help is-danger"></p>
+        </div>
+
+        <div class="int-area">
+            <input type="password" id="input-password" class="input" placeholder="PASSWORD"><br>
+            <p id="help-passwrod" class="help is-hidden">비번은 8~20자 영문 숫자 특수문자</p>
+            <p id="help-password-login" class="help is-danger"></p>
+        </div>
+
+        <div class="btn-area">
+            <button onclick="sign_in()" id="btn">로그인</button>
+        </div>
+
+        <div class="caption">
+            <a href="/member">회원가입</a>
+        </div>
+    </section>
+</body>
+
+</html>

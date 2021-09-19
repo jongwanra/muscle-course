@@ -1,0 +1,111 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap');
+
+* {
+  margin: 0px;
+  padding: 0px;
+  list-style: none;
+  text-decoration: none;
+  color: black;
+  font-family: 'Noto Sans KR', sans-serif;
+}
+
+.header {
+  height: 150px;
+  text-align: center;
+  border-bottom: 1px solid #999;
+  box-sizing: border-box;
+}
+
+.header-logo h1 {
+  font: bold 40px 'arial';
+  padding-top: 0px;
+  letter-spacing: 1px;
+  margin-top: 30px;
+  color: #166cea;
+}
+
+.header-logo p {
+  font: bold 12px 'arial';
+  letter-spacing: 1px;
+}
+
+.header-gnb ul {
+  margin-top: 25px;
+}
+
+.header-gnb ul li {
+  display: inline-block;
+}
+
+.header-gnb ul li a {
+  font: bold 12px 'arial';
+  display: block;
+  color: #999;
+  margin: 0px 30px;
+  letter-spacing: 2px;
+  font-size: 18px;
+}
+
+.board2 {
+  margin: auto;
+  text-align: center;
+  margin-top: 20px;
+  font-size: 25px;
+  letter-spacing: 1px;
+  color: #166cea;
+}
+
+.btn-area {
+  width: 100%;
+  height: 40px;
+  background: #166cea;
+  color: #fff;
+  font-size: 20px;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.btn-area2 {
+  width: 100%;
+  height: 40px;
+  background: #166cea;
+  color: #fff;
+  font-size: 20px;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+}
+
+.login-font {
+  color: #166cea;
+}
+
+.box {
+  width: 800px;
+  margin: auto;
+}
+
+.media-content {
+  color: red;
+}
+
+#input-today {
+  width: 800px;
+  margin: auto;
+}
+
+#input-save {
+  width: 800px;
+  margin: auto;
+  background: transparent;
+}
+
+body {
+  height: 300vh;
+
+  background-repeat: no-repeat;
+  background-size: cover;
+}

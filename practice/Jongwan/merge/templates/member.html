@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+    <link href="{{ url_for('static', filename='members.css') }}" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+    <meta charset="UTF-8">
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <title>회원가입</title>
+</head>
+
+<body>
+    <section class="member-form">
+        <h1>DEUKGEUN</h1>
+        <h4>가입을 시작합니다.</h4>
+
+
+        <div class="int-area">
+            <input type="text" id="input-username" class="input" placeholder="아이디를 입력해주세요.">
+            <p id="help-id"></p>
+        </div>
+        <div class="btn-area">
+            <button class="check-btn" onclick="check_id()">중복확인</button>
+        </div>
+
+
+        <div class="int-area">
+            <input type="text" id="input-nickname" class="input" placeholder="닉네임을 입력해주세요.">
+            <p id="help-nick"></p>
+        </div>
+        <div class="btn-area">
+            <button class="check-btn" onclick="check_nick()">중복확인</button>
+        </div>
+
+        <div class="int-area">
+            <input type="text" id="input-introduce" class="input" placeholder="간단한 소개">
+            <p id="help-introduce"></p>
+        </div>
+
+        <div class="int-area">
+            <input type="password" id="input-password" class="input" placeholder="비밀번호를 입력해주세요."><br>
+            <p id="help-password"></p>
+        </div>
+
+        <div class="int-area">
+            <input type="password" id="input-password2" placeholder="비밀번호 확인"><br>
+        </div>
+        <div class="btn-area1">
+            <button onclick="sign_up()">가입</button>
+        </div>
+    </section>
+</body>
+
+</html>
